@@ -1,0 +1,13 @@
+# Hilti SLAM Challenge 2022 - exp21_outside_building (outdoor, "Easy"), Hesai PandarXT-32
+lidar_topic: /hesai/pandar
+imu_topic: /alphasense/imu
+t_start: 0.0
+t_end: null          # use e.g. 60 for a quick first test
+min_range: 0.5
+max_range: 60.0
+icp_voxel: 0.3
+deskew: true
+map_voxel: 0.05
+map_max_range: 30.0
+mesh_voxel: 0.10
+poisson_depth: 9

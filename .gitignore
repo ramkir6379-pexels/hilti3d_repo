@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.venv/
+work/
+data/
+*.bag
+*.ply
+*.npz
+*.log
+.ipynb_checkpoints/
