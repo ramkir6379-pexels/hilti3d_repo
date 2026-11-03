@@ -91,6 +91,13 @@ def run(cfg: Config, work: Path) -> dict:
         acc, _ = acc.remove_radius_outlier(nb_points=cfg.map_outlier_nb,
                                            radius=cfg.map_outlier_radius_mult * cfg.map_voxel)
     n_after = len(acc.points)
+
+    # Hesai intensities are mostly low -> map looked near-black. Stretch to the 99th percentile
+    # (display only; per-point raw intensity is not needed downstream in Phase 1).
+    g = np.asarray(acc.colors)
+    p99 = float(np.percentile(g[:, 0], 99)) or 1.0
+    g = np.clip(g / p99, 0.0, 1.0) ** 0.7
+    acc.colors = o3d.utility.Vector3dVector(g)
     o3d.io.write_point_cloud(str(work / "map.ply"), acc, write_ascii=False)
 
     bb = acc.get_axis_aligned_bounding_box()
