@@ -43,6 +43,7 @@ def run(cfg: Config, work: Path) -> dict:
     log.info("KISS-ICP ready | max_range=%.0f min_range=%.2f voxel=%.2f deskew=%s",
              cfg.max_range, cfg.min_range, cfg.icp_voxel, cfg.deskew)
 
+    (work / "poses_raw.npy").unlink(missing_ok=True)  # tilt stage will re-create it
     out_dir = work / "deskewed"
     out_dir.mkdir(parents=True, exist_ok=True)
     for old in out_dir.glob("scan_*.npz"):

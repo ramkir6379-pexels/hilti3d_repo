@@ -22,6 +22,19 @@ class Config:
     icp_voxel: float = 0.3         # voxel size of KISS-ICP's internal map (m); tune per scene
     deskew: bool = True            # correct motion distortion using per-point time
 
+    # ---- tilt correction (IMU gravity) ---------------------------------------
+    tilt_correction: bool = True
+    # Rotation taking IMU-frame vectors into the LiDAR frame (row-major 3x3).
+    # Hilti 2022: IMU z points down, LiDAR z points up -> [[0,-1,0],[-1,0,0],[0,0,-1]]
+    imu_to_lidar_R: list = None
+    tilt_window_s: float = 6.0     # seconds of accelerometer averaged to estimate "up"
+    tilt_init_s: float = 3.0       # initial seconds (rig assumed ~still) used to level the world
+
+    # ---- accuracy evaluation (optional) -----------------------------------
+    gt_file: Optional[str] = None  # Hilti ground-truth txt (timestamp x y z qx qy qz qw)
+    # Measurement tip in the LiDAR frame, derived from lidar_calibration.yaml (Hilti 2022):
+    tip_in_lidar: list = None      # default [0.0, -0.06, -0.1414]
+
     # ---- map merge ---------------------------------------------------------
     map_voxel: float = 0.05        # voxel size of the merged map (m)
     map_max_range: float = 30.0    # points farther than this are not added to the map
@@ -39,6 +52,12 @@ class Config:
 
     # ---- export ------------------------------------------------------------
     preview_max_points: int = 1_500_000
+
+    def __post_init__(self):
+        if self.imu_to_lidar_R is None:
+            self.imu_to_lidar_R = [0, -1, 0, -1, 0, 0, 0, 0, -1]
+        if self.tip_in_lidar is None:
+            self.tip_in_lidar = [0.0, -0.06, -0.1414]
 
     @classmethod
     def from_yaml(cls, path: str | Path | None) -> "Config":

@@ -3,7 +3,7 @@
   python -m hilti3d.pipeline --bag /content/data/exp21.bag --work /content/drive/MyDrive/hilti_work \
          --stages all --set t_end=60
 
-Stages: extract -> odometry -> map -> mesh -> export.  Each stage writes a marker
+Stages: extract -> odometry -> tilt -> map -> mesh -> export -> evaluate.  Each stage writes a marker
 (state/<stage>.done) so a re-run skips finished stages (use --force to redo).
 """
 from __future__ import annotations
@@ -20,7 +20,7 @@ import yaml
 from .config import Config
 from .logutil import log, mem, setup_logging
 
-STAGES = ["extract", "odometry", "map", "mesh", "export"]
+STAGES = ["extract", "odometry", "tilt", "map", "mesh", "export", "evaluate"]
 
 
 def _stage_fn(name: str):
@@ -28,6 +28,10 @@ def _stage_fn(name: str):
         from . import extract as m
     elif name == "odometry":
         from . import odometry as m
+    elif name == "tilt":
+        from . import tilt as m
+    elif name == "evaluate":
+        from . import evaluate as m
     elif name == "map":
         from . import mapping as m
     elif name == "mesh":
